@@ -4,6 +4,7 @@ using FyraIRad.Models;
 
 namespace FyraIRad.Controllers;
 
+//hej svejs
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
