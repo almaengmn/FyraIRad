@@ -6,6 +6,7 @@
 bin/
 obj/
 out/
+.vs/
 
 # Användarspecifika filer
 *.user
