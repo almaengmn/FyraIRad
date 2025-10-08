@@ -1,0 +1,82 @@
+# ============================
+# ASP.NET Core / .NET Ignore
+# ============================
+
+# Byggmappar
+bin/
+obj/
+out/
+
+# Användarspecifika filer
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+.history/
+*.code-workspace
+
+# Rider / JetBrains
+.idea/
+
+# MacOS-systemfiler
+.DS_Store
+
+# Loggfiler
+*.log
+
+# Temporära filer
+*.tmp
+*.temp
+*.bak
+*.cache
+*.dbmdl
+
+# Paket och beroenden
+*.nupkg
+*.snupkg
+*.nuspec
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Publish-output
+*.Publish.xml
+publish/
+
+# Azure och Docker
+PublishProfiles/
+docker-compose.override.yml
+docker-compose.vs.debug.yml
+docker-compose.vs.release.yml
+
+# User secrets / credentials
+secrets.json
+appsettings.Development.json
+appsettings.Local.json
+appsettings.Production.json
+
+# SQLite eller lokala databaser
+*.db
+*.mdf
+*.ldf
+
+# Backup / restore / test data
+*.bak
+*.sql
+*.csv
+
+# Build-resultat och analyser
+TestResults/
+*.coverage
+*.coveragexml
+*.trx
+
+# IIS och web
+iisexpress/
+wwwroot/lib/
+wwwroot/node_modules/
+node_modules/
+bower_components/
