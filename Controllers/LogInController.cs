@@ -3,7 +3,7 @@ using FyraIRad.Models;
 
 namespace FyraIRad.Controllers
 {
-    public class LogIn : Controller
+    public class LogInController : Controller
     {
         public IActionResult Index()
         {
@@ -12,9 +12,9 @@ namespace FyraIRad.Controllers
             return View();
         }
 
-      .
+
         [HttpPost]
-        public IActionResult LogInUser(UserDetails tryLogin)
+        public IActionResult LogIn(UserDetails tryLogin)
         {
             List<UserDetails> userList = new List<UserDetails>();
             UserMethods userMethods = new UserMethods();
@@ -25,9 +25,6 @@ namespace FyraIRad.Controllers
             {
                 if (tryLogin.Username == userList[i].Username && tryLogin.Password == userList[i].Password)
                 {
-                    ViewBag.Id = userList[i].Id;
-                    ViewBag.User = userList[i].Username;
-                    ViewBag.Password = userList[i].Password;
                     return RedirectToAction("ShowUserList");
                 }
                 else

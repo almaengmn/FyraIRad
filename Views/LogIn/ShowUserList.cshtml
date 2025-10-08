@@ -1,0 +1,31 @@
+﻿@model IEnumerable<FyraIRad.Models.UserDetails>
+
+@{
+    ViewData["Title"] = "ShowUserList";
+}
+
+<h1>ShowUserList</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Username)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Username)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div style="border: 2px solid black;">
+    <h3>Your User: </h3>
+</div>
