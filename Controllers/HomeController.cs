@@ -4,7 +4,7 @@ using FyraIRad.Models;
 
 namespace FyraIRad.Controllers;
 
-//hej där hoppas
+//hej där Saga
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
