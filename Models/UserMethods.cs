@@ -62,57 +62,9 @@ namespace FyraIRad.Models
             }
         }
 
-        public UserDetails GetOneUserDetails(int id, out string errormsg)
+        public UserDetails GetOneUserDetails(int id)
         {
-            SqlConnection sqlConnection = new SqlConnection();
-            sqlConnection.ConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Project4inaRow;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
-            String sqlString = "SELECT * FROM Users WHERE UserId=@Id";
-            SqlCommand sqlCommand = new SqlCommand(sqlString, sqlConnection);
-
-            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
-            DataSet dataSet = new DataSet();
-
-            UserDetails user = new UserDetails();
-
-            sqlCommand.Parameters.AddWithValue("@Id", id);
-
-            try
-            {
-                sqlConnection.Open();
-                sqlDataAdapter.Fill(dataSet, "UserList");
-
-                int i = 0;
-                int count = 0;
-
-                count = dataSet.Tables["UserList"].Rows.Count;
-
-                if (i < count)
-                {
-                    
-                        user.Id = Convert.ToInt32(dataSet.Tables["UserList"].Rows[i]["UserId"]);
-                        user.Username = Convert.ToString(dataSet.Tables["UserList"].Rows[i]["Username"]);
-                        user.Password = Convert.ToString(dataSet.Tables["UserList"].Rows[i]["Password"]);
-
-                    
-                    errormsg = "";
-                    return user;
-                }
-                else
-                {
-                    errormsg = "No users found in database";
-                    return user;
-
-                }
-            }
-            catch (Exception e)
-            {
-                errormsg = e.Message;
-                return user;
-            }
-            finally
-            {
-                sqlConnection.Close();
-            }
+            return new UserDetails();
         }
 
 
@@ -124,30 +76,6 @@ namespace FyraIRad.Models
             SqlCommand sqlCommand = new SqlCommand(sqlString, sqlConnection);
             sqlCommand.Parameters.AddWithValue("@Username", newUser.Username);
             sqlCommand.Parameters.AddWithValue("@Password", newUser.Password);
-            try
-            {
-                sqlConnection.Open();
-                sqlCommand.ExecuteNonQuery();
-            }
-            catch (Exception e)
-            {
-                string errormsg = e.Message;
-            }
-            finally
-            {
-                sqlConnection.Close();
-            }
-        }
-
-        public void EditUser(UserDetails editUser)
-        {
-            SqlConnection sqlConnection = new SqlConnection();
-            sqlConnection.ConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Project4inaRow;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
-            String sqlString = "UPDATE Users SET Username=@Username, Password=@Password WHERE UserId=@Id";
-            SqlCommand sqlCommand = new SqlCommand(sqlString, sqlConnection);
-            sqlCommand.Parameters.AddWithValue("@Id", editUser.Id);
-            sqlCommand.Parameters.AddWithValue("@Username", editUser.Username);
-            sqlCommand.Parameters.AddWithValue("@Password", editUser.Password);
             try
             {
                 sqlConnection.Open();
