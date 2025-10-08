@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<FyraIRad.Models.UserDetails>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor Accessor
 
 @{
     ViewData["Title"] = "ShowUserList";
@@ -26,6 +28,11 @@
     </tbody>
 </table>
 
-<div style="border: 2px solid black;">
-    <h3>Your User: </h3>
+<div style="border: 1px solid black;">
+    <h5>Your User: </h5>
+    Id: @Accessor.HttpContext.Session.GetInt32("UserId") <br />
+    Username: @Accessor.HttpContext.Session.GetString("Username")
+    <br />
+    @Html.ActionLink("Edit", "EditUser", new { id = @Accessor.HttpContext.Session.GetInt32("UserId") })
+
 </div>

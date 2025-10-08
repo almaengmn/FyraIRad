@@ -25,6 +25,11 @@ namespace FyraIRad.Controllers
             {
                 if (tryLogin.Username == userList[i].Username && tryLogin.Password == userList[i].Password)
                 {
+                    HttpContext.Session.SetInt32("UserId", (int)userList[i].Id);
+                    HttpContext.Session.SetString("Username", tryLogin.Username);
+                    HttpContext.Session.SetString("Password", tryLogin.Password);
+                    HttpContext.Session.SetString("IsLoggedIn", "true");
+
                     return RedirectToAction("ShowUserList");
                 }
                 else
@@ -56,6 +61,26 @@ namespace FyraIRad.Controllers
             userList = userMethods.GetUserDetails(out string errormsg);
 
             return View(userList);
+        }
+
+        [HttpGet]
+        public IActionResult EditUser(int id)
+        {
+            UserDetails user = new UserDetails();
+            UserMethods userMethods = new UserMethods();
+            user = userMethods.GetOneUserDetails(id, out string errormsg);
+            return View(user);
+
+        }
+
+        [HttpPost]
+        public IActionResult EditUser(UserDetails editUser)
+        {
+            UserMethods userMethods = new UserMethods();
+            userMethods.EditUser(editUser);
+            HttpContext.Session.SetString("Username", editUser.Username);
+            HttpContext.Session.SetString("Password", editUser.Password);
+            return RedirectToAction("ShowUserList");
         }
     }
 }
