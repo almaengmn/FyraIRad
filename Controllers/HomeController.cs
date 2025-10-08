@@ -9,6 +9,8 @@ namespace FyraIRad.Controllers;
 // Heliga Git, snälla fungera
 
 // Pls work
+
+//Disa dee diby de
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
