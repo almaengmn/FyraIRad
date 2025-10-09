@@ -1,10 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using FyraIRad.Models;
+﻿using FyraIRad.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Configuration;
 
 namespace FyraIRad.Controllers
 {
     public class LogInController : Controller
     {
+        private readonly UserMethods userMethods;
+        public LogInController(IConfiguration configuration)
+        {
+            userMethods = new UserMethods(configuration);
+        }
+
+
         public IActionResult Index()
         {
             UserDetails user = new UserDetails();
@@ -17,7 +25,7 @@ namespace FyraIRad.Controllers
         public IActionResult LogIn(UserDetails tryLogin)
         {
             List<UserDetails> userList = new List<UserDetails>();
-            UserMethods userMethods = new UserMethods();
+           
 
             userList = userMethods.GetUserDetails(out string errormsg);
 
@@ -32,19 +40,19 @@ namespace FyraIRad.Controllers
 
                     return RedirectToAction("ShowUserList");
                 }
-                else
-                {
-                    ViewBag.Error = "Username or password is incorrect";
-                    return View("Index");
-                }
+                
+                
             }
-            return View("Index");
+
+                ViewBag.Error = "Username or password is incorrect";
+                return View("Index");
+           
         }
 
         [HttpPost]
         public IActionResult CreateUser(UserDetails newUser)
         {
-            UserMethods userMethods = new UserMethods();
+            
             userMethods.CreateUser(newUser);
 
             return RedirectToAction("ShowUserList");
@@ -56,8 +64,6 @@ namespace FyraIRad.Controllers
         {
             List<UserDetails> userList = new List<UserDetails>();
 
-            UserMethods userMethods = new UserMethods();
-
             userList = userMethods.GetUserDetails(out string errormsg);
 
             return View(userList);
@@ -67,7 +73,7 @@ namespace FyraIRad.Controllers
         public IActionResult EditUser(int id)
         {
             UserDetails user = new UserDetails();
-            UserMethods userMethods = new UserMethods();
+            
             user = userMethods.GetOneUserDetails(id, out string errormsg);
             return View(user);
 
@@ -76,7 +82,7 @@ namespace FyraIRad.Controllers
         [HttpPost]
         public IActionResult EditUser(UserDetails editUser)
         {
-            UserMethods userMethods = new UserMethods();
+            
             userMethods.EditUser(editUser);
             HttpContext.Session.SetString("Username", editUser.Username);
             HttpContext.Session.SetString("Password", editUser.Password);
