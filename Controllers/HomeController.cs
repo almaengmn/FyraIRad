@@ -4,13 +4,7 @@ using FyraIRad.Models;
 
 namespace FyraIRad.Controllers;
 
-//hej där Saga
 
-// Heliga Git, snälla fungera
-
-// Pls work
-
-//Disa dee diby de
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
