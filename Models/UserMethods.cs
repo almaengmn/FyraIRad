@@ -159,9 +159,24 @@ namespace FyraIRad.Models
                 {
                     string errormsg = e.Message;
                 }
-                finally
+            }
+        }
+
+        public void DeleteUser(UserDetails user)
+        {
+            using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
+            {
+                String sqlString = "DELETE FROM Users WHERE UserId=@Id";
+                SqlCommand sqlCommand = new SqlCommand(sqlString, sqlConnection);
+                sqlCommand.Parameters.AddWithValue("@Id", user.Id);
+                try
                 {
-                    sqlConnection.Close();
+                    sqlConnection.Open();
+                    sqlCommand.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    string errormsg = e.Message;
                 }
             }
         }

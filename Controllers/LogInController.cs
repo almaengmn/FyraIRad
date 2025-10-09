@@ -63,20 +63,35 @@ namespace FyraIRad.Controllers
         [HttpGet]
         public IActionResult ShowUserList()
         {
-            List<UserDetails> userList = new List<UserDetails>();
+            if(HttpContext.Session.GetString("IsLoggedIn") == "true") {
+                List<UserDetails> userList = new List<UserDetails>();
 
-            userList = userMethods.GetUserDetails(out string errormsg);
+                userList = userMethods.GetUserDetails(out string errormsg);
 
-            return View(userList);
+                return View(userList);
+            }
+            else
+            {
+                ViewBag.Error = "Not logged in";
+                return RedirectToAction("Index");
+            }
+            
         }
 
         [HttpGet]
         public IActionResult EditUser(int id)
         {
-            UserDetails user = new UserDetails();
-            
-            user = userMethods.GetOneUserDetails(id, out string errormsg);
-            return View(user);
+            if (HttpContext.Session.GetString("IsLoggedIn") == "true")
+            {
+                UserDetails user = new UserDetails();
+
+                user = userMethods.GetOneUserDetails(id, out string errormsg);
+                return View(user);
+            }
+            {
+                ViewBag.Error = "Not logged in";
+                return RedirectToAction("Index");
+            }
 
         }
 
@@ -88,6 +103,29 @@ namespace FyraIRad.Controllers
             HttpContext.Session.SetString("Username", editUser.Username);
             HttpContext.Session.SetString("Password", editUser.Password);
             return RedirectToAction("ShowUserList");
+        }
+
+        [HttpGet]
+        public IActionResult DeleteUser(int id)
+        {
+            if (HttpContext.Session.GetString("IsLoggedIn") == "true")
+            {
+                UserDetails user = new UserDetails();
+                user = userMethods.GetOneUserDetails(id, out string errormsg);
+                return View(user);
+            }
+            {
+                ViewBag.Error = "Not logged in";
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult DeleteUser(UserDetails deleteUser)
+        {
+            userMethods.DeleteUser(deleteUser);
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index");
         }
     }
 }
