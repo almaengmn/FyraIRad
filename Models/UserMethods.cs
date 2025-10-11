@@ -42,7 +42,7 @@ namespace FyraIRad.Models
                         while (i < count)
                         {
                             UserDetails user = new UserDetails();
-                            user.Id = Convert.ToInt32(dataSet.Tables["UserList"].Rows[i]["UserId"]);
+                            user.UserId = Convert.ToInt32(dataSet.Tables["UserList"].Rows[i]["UserId"]);
                             user.Username = Convert.ToString(dataSet.Tables["UserList"].Rows[i]["Username"]);
                             user.Password = Convert.ToString(dataSet.Tables["UserList"].Rows[i]["Password"]);
 
@@ -117,7 +117,7 @@ namespace FyraIRad.Models
                     if (i < count)
                     {
 
-                        user.Id = Convert.ToInt32(dataSet.Tables["UserList"].Rows[i]["UserId"]);
+                        user.UserId = Convert.ToInt32(dataSet.Tables["UserList"].Rows[i]["UserId"]);
                         user.Username = Convert.ToString(dataSet.Tables["UserList"].Rows[i]["Username"]);
                         user.Password = Convert.ToString(dataSet.Tables["UserList"].Rows[i]["Password"]);
 
@@ -147,7 +147,7 @@ namespace FyraIRad.Models
             {
                 String sqlString = "UPDATE Users SET Username=@Username, Password=@Password WHERE UserId=@Id";
                 SqlCommand sqlCommand = new SqlCommand(sqlString, sqlConnection);
-                sqlCommand.Parameters.AddWithValue("@Id", editUser.Id);
+                sqlCommand.Parameters.AddWithValue("@Id", editUser.UserId);
                 sqlCommand.Parameters.AddWithValue("@Username", editUser.Username);
                 sqlCommand.Parameters.AddWithValue("@Password", editUser.Password);
                 try
@@ -168,7 +168,7 @@ namespace FyraIRad.Models
             {
                 String sqlString = "DELETE FROM Users WHERE UserId=@Id";
                 SqlCommand sqlCommand = new SqlCommand(sqlString, sqlConnection);
-                sqlCommand.Parameters.AddWithValue("@Id", user.Id);
+                sqlCommand.Parameters.AddWithValue("@Id", user.UserId);
                 try
                 {
                     sqlConnection.Open();

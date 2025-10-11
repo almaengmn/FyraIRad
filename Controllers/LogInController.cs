@@ -34,7 +34,7 @@ namespace FyraIRad.Controllers
             {
                 if (tryLogin.Username == userList[i].Username && tryLogin.Password == userList[i].Password)
                 {
-                    HttpContext.Session.SetInt32("UserId", (int)userList[i].Id);
+                    HttpContext.Session.SetInt32("UserId", (int)userList[i].UserId);
                     HttpContext.Session.SetString("Username", tryLogin.Username);
                     HttpContext.Session.SetString("Password", tryLogin.Password);
                     HttpContext.Session.SetString("IsLoggedIn", "true");
@@ -53,8 +53,21 @@ namespace FyraIRad.Controllers
         [HttpPost]
         public IActionResult CreateUser(UserDetails newUser)
         {
-            
-            userMethods.CreateUser(newUser);
+            List<UserDetails> userList = new List<UserDetails>();
+
+
+            userList = userMethods.GetUserDetails(out string errormsg);
+
+            for (int i = 0; i < userList.Count; i++)
+            {
+                if (newUser.Username == userList[i].Username)
+                {
+                    ViewBag.Error = "Username already exists";
+                    return View("Index");
+                }
+            }
+
+                userMethods.CreateUser(newUser);
 
             return RedirectToAction("ShowUserList");
         }
