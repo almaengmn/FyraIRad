@@ -4,25 +4,54 @@
 
 @{
     ViewData["Title"] = "ShowUserList";
+    var activeGames = ViewBag.ActiveGames as List<FyraIRad.Models.GameDetails>;
+
 }
 
 <h1>Users List</h1>
+
+@ViewBag.JoinError
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Username)
+                Users
+            </th>
+            <th>
+                Actions
             </th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
+            var hasActiveGame = activeGames?.Any(g => g.playerRedId == item.UserId) ?? false;
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.Username)
                 </td>
+
+                @if (hasActiveGame)
+                {
+                    <td>
+                        <form asp-action="JoinGame" asp-controller="Game" method="post">
+                        <input type="hidden" name="id" value="@item.UserId" />
+                        <button type="submit" class="btn btn-success">Join Game</button>
+                    </form>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <form asp-action="StartGame" asp-controller="Game" method="post">
+                            <input type="hidden" name="id" value="@item.UserId" />
+                            <button type="submit" class="btn btn-primary">Start Game</button>
+                        </form>
+                    </td>
+                }
+
+                
             </tr>
         }
     </tbody>

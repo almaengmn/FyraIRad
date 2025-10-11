@@ -93,33 +93,6 @@ namespace FyraIRad.Models
             }
         }
 
-        public String GetGameStatus(GameDetails Game)
-        {
-            using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
-            {
-                String sqlString = "SELECT Status FROM Games WHERE GameId=@Id";
-                SqlCommand sqlCommand = new SqlCommand(sqlString, sqlConnection);
-                sqlCommand.Parameters.AddWithValue("@Id", Game.GameId);
-                try
-                {
-                    sqlConnection.Open();
-                    var status = sqlCommand.ExecuteScalar();
-                    if (status != null)
-                    {
-                        return status.ToString();
-                    }
-                    else
-                    {
-                        return "Game not found";
-                    }
-                }
-                catch (Exception e)
-                {
-                    string errormsg = e.Message;
-                    return errormsg;
-                }
-            }
-        }
 
 
         public void UpdateGameStatus(GameDetails Game)

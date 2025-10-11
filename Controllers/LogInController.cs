@@ -8,9 +8,11 @@ namespace FyraIRad.Controllers
     public class LogInController : Controller
     {
         private readonly UserMethods userMethods;
+        private readonly GameMethods gameMethods;
         public LogInController(IConfiguration configuration)
         {
             userMethods = new UserMethods(configuration);
+            gameMethods = new GameMethods(configuration);
         }
 
 
@@ -80,6 +82,22 @@ namespace FyraIRad.Controllers
                 List<UserDetails> userList = new List<UserDetails>();
 
                 userList = userMethods.GetUserDetails(out string errormsg);
+
+                List<GameDetails> gameList = new List<GameDetails>();
+                gameList = gameMethods.GetGameDetails(out string errorMsg);
+
+                gameList = gameList.Where(g => g.Status == "Waiting" && (g.playerYellowId == HttpContext.Session.GetInt32("UserId") )).ToList();
+
+                ViewBag.ActiveGames = gameList;
+
+                for (int i = 0; i < userList.Count; i++)
+                {
+                    if (userList[i].UserId == HttpContext.Session.GetInt32("UserId"))
+                    {
+                        userList.RemoveAt(i);
+                    }
+                    
+                }
 
                 return View(userList);
             }
