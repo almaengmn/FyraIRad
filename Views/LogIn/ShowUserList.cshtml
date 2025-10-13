@@ -64,5 +64,6 @@
     <br />
     @Html.ActionLink("Edit", "EditUser", new { id = @Accessor.HttpContext.Session.GetInt32("UserId") })
     @Html.ActionLink("Delete", "DeleteUser", new { id = @Accessor.HttpContext.Session.GetInt32("UserId") })
+    @Html.ActionLink("Logout", "Logout", "User", null, new { @class = "btn btn-outline-dark" })
 
 </div>

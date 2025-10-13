@@ -158,6 +158,12 @@ namespace FyraIRad.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("ShowUserList");
         }
+        [HttpPost]
+public IActionResult Logout()
+{
+    HttpContext.Session.Clear(); 
+    return RedirectToAction("Index"); 
+}
     }
 }
 
