@@ -5,4 +5,15 @@
 }
 
 @ViewBag.GameId 
-we
+
+
+<div style="width: 750px  ;display: grid; grid-template-columns: repeat(7, 100px); grid-template-rows: repeat(6, 100px); gap: 5px; border: 2px solid black; padding: 10px; background-color: #f0f0f0;">
+    @for (int row = 0; row < 6; row++)
+    {
+        for (int col = 0; col < 7; col++)
+        {
+            <div style="width: 100px; height: 100px; background-color: #ffffff; border: 1px solid #000000; display: flex; align-items: center; justify-content: center;">
+                <!-- Placeholder for game piece -->
+            </div>
+        }
+}

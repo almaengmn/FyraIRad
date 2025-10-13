@@ -88,7 +88,7 @@ namespace FyraIRad.Controllers
 
                 gameList = gameList.Where(g => g.Status == "Waiting" && (g.playerYellowId == HttpContext.Session.GetInt32("UserId") )).ToList();
 
-                ViewBag.ActiveGames = gameList;
+                ViewBag.ActiveGames = gameList; 
 
                 for (int i = 0; i < userList.Count; i++)
                 {
@@ -156,7 +156,8 @@ namespace FyraIRad.Controllers
         {
             userMethods.DeleteUser(deleteUser);
             HttpContext.Session.Clear();
-            return RedirectToAction("Index");
+            return RedirectToAction("ShowUserList");
         }
     }
 }
+

@@ -93,8 +93,6 @@ namespace FyraIRad.Models
             }
         }
 
-
-
         public void UpdateGameStatus(GameDetails Game)
         {
             using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
@@ -210,7 +208,6 @@ namespace FyraIRad.Models
                 }
             }
         }
-
 
         public void DeleteGame(GameDetails Game)
         {
