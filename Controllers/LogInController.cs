@@ -28,7 +28,7 @@ namespace FyraIRad.Controllers
         public IActionResult LogIn(UserDetails tryLogin)
         {
             List<UserDetails> userList = new List<UserDetails>();
-           
+
 
             userList = userMethods.GetUserDetails(out string errormsg);
 
@@ -43,13 +43,13 @@ namespace FyraIRad.Controllers
 
                     return RedirectToAction("ShowUserList");
                 }
-                
-                
+
+
             }
 
-                ViewBag.Error = "Username or password is incorrect";
-                return View("Index");
-           
+            ViewBag.Error = "Username or password is incorrect";
+            return View("Index");
+
         }
 
         [HttpPost]
@@ -69,7 +69,7 @@ namespace FyraIRad.Controllers
                 }
             }
 
-                userMethods.CreateUser(newUser);
+            userMethods.CreateUser(newUser);
 
             return RedirectToAction("ShowUserList");
         }
@@ -78,7 +78,8 @@ namespace FyraIRad.Controllers
         [HttpGet]
         public IActionResult ShowUserList()
         {
-            if(HttpContext.Session.GetString("IsLoggedIn") == "true") {
+            if (HttpContext.Session.GetString("IsLoggedIn") == "true")
+            {
                 List<UserDetails> userList = new List<UserDetails>();
 
                 userList = userMethods.GetUserDetails(out string errormsg);
@@ -86,9 +87,9 @@ namespace FyraIRad.Controllers
                 List<GameDetails> gameList = new List<GameDetails>();
                 gameList = gameMethods.GetGameDetails(out string errorMsg);
 
-                gameList = gameList.Where(g => g.Status == "Waiting" && (g.playerYellowId == HttpContext.Session.GetInt32("UserId") )).ToList();
+                gameList = gameList.Where(g => g.Status == "Waiting" && (g.playerYellowId == HttpContext.Session.GetInt32("UserId"))).ToList();
 
-                ViewBag.ActiveGames = gameList; 
+                ViewBag.ActiveGames = gameList;
 
                 for (int i = 0; i < userList.Count; i++)
                 {
@@ -96,7 +97,7 @@ namespace FyraIRad.Controllers
                     {
                         userList.RemoveAt(i);
                     }
-                    
+
                 }
 
                 return View(userList);
@@ -106,7 +107,7 @@ namespace FyraIRad.Controllers
                 ViewBag.Error = "Not logged in";
                 return RedirectToAction("Index");
             }
-            
+
         }
 
         [HttpGet]
@@ -129,7 +130,7 @@ namespace FyraIRad.Controllers
         [HttpPost]
         public IActionResult EditUser(UserDetails editUser)
         {
-            
+
             userMethods.EditUser(editUser);
             HttpContext.Session.SetString("Username", editUser.Username);
             HttpContext.Session.SetString("Password", editUser.Password);
@@ -158,12 +159,11 @@ namespace FyraIRad.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("ShowUserList");
         }
-        [HttpPost]
-public IActionResult Logout()
-{
-    HttpContext.Session.Clear(); 
-    return RedirectToAction("Index"); 
-}
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "LogIn");
+        }
+
     }
 }
-
