@@ -62,8 +62,8 @@
     Id: @Accessor.HttpContext.Session.GetInt32("UserId") <br />
     Username: @Accessor.HttpContext.Session.GetString("Username")
     <br />
-    @Html.ActionLink("Edit", "EditUser", new { id = @Accessor.HttpContext.Session.GetInt32("UserId") })
-    @Html.ActionLink("Delete", "DeleteUser", new { id = @Accessor.HttpContext.Session.GetInt32("UserId") })
-    @Html.ActionLink("Logout", "Logout", "LogIn", null, new { @class = "btn btn-outline-dark" })
+    @Html.ActionLink("Edit", "EditUser", new { id = @Accessor.HttpContext.Session.GetInt32("UserId") }, new { @class = "btn btn-outline-primary" })
+    @Html.ActionLink("Delete", "DeleteUser", new { id = @Accessor.HttpContext.Session.GetInt32("UserId") }, new { @class = "btn btn-outline-danger" })
+    @Html.ActionLink("Logout", "Logout", "LogIn", null, new { @class = "btn btn-outline-warning" })
 
 </div>
