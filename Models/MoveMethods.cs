@@ -10,7 +10,6 @@ namespace FyraIRad.Models
 
         public MoveMethods(IConfiguration configuration)
         {
-
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
