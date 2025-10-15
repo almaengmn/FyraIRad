@@ -7,6 +7,18 @@
     var activeGames = ViewBag.ActiveGames as List<FyraIRad.Models.GameDetails>;
 
 }
+<style>
+    .btn-outline-warning.custom-hover {
+        color: #ffc107; /* gul text som matchar kantfärgen */
+        border-color: #ffc107;
+    }
+
+        .btn-outline-warning.custom-hover:hover {
+            background-color: #ffc107;
+            color: white; /* vit text vid hover */
+        }
+</style>
+
 
 <h1>Users List</h1>
 
@@ -14,6 +26,7 @@
 
 <table class="table">
     <thead>
+
         <tr>
             <th>
                 Users
@@ -64,5 +77,6 @@
     <br />
     @Html.ActionLink("Edit", "EditUser", new { id = @Accessor.HttpContext.Session.GetInt32("UserId") }, new { @class = "btn btn-outline-primary" })
     @Html.ActionLink("Delete", "DeleteUser", new { id = @Accessor.HttpContext.Session.GetInt32("UserId") }, new { @class = "btn btn-outline-danger" })
-    @Html.ActionLink("Logout", "Logout", "LogIn", null, new { @class = "btn btn-outline-warning"})
+    @Html.ActionLink("Logout", "Logout", "LogIn", null, new { @class = "btn btn-outline-warning custom-hover"})
+
 </div>
