@@ -26,7 +26,7 @@
     <tbody>
         @foreach (var item in Model)
         {
-            var hasActiveGame = activeGames?.Any(g => g.playerRedId == item.UserId) ?? false;
+            var hasActiveGame = activeGames?.Any(g => (g.playerRedId == item.UserId) || (g.playerYellowId == item.UserId)) ?? false;
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.Username)

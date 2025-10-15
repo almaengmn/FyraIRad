@@ -2,18 +2,46 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    var gameId = ViewBag.GameId;
+    var MoveList = ViewBag.MoveList as List<MoveDetails>;
 }
 
-@ViewBag.GameId 
 
-
-<div style="width: 750px  ;display: grid; grid-template-columns: repeat(7, 100px); grid-template-rows: repeat(6, 100px); gap: 5px; border: 2px solid black; padding: 10px; background-color: #f0f0f0;">
-    @for (int row = 0; row < 6; row++)
+<!-- Pilar ovanför rutnätet -->
+<div style="width: 750px; display: grid; grid-template-columns: repeat(7, 100px); margin-bottom: 5px;">
+    @for (int column = 1; column < 8; column++)
     {
-        for (int col = 0; col < 7; col++)
+        <div style="display: flex; justify-content: center;">
+            <form asp-action="CreateMove" asp-controller="Game" method="post" style="margin:0;">
+                <input type="hidden" name="gameId" value="@gameId" />
+                <input type="hidden" name="columm" value="@column" />
+                <button type="submit" style="background:none; border:none; cursor:pointer;">
+                    <span style="font-size:2em;">&#8595;</span> <!-- Nedåtpil -->
+                </button>
+            </form>
+        </div>
+    }
+</div>
+
+<!-- Rutnätet -->
+<div style="width: 750px; display: grid; grid-template-columns: repeat(7, 100px); grid-template-rows: repeat(6, 100px); gap: 5px; border: 2px solid black; padding: 10px; background-color: #f0f0f0;">
+    @for (int row = 1; row < 7; row++)
+    {
+        for (int col = 1; col < 8; col++)
         {
             <div style="width: 100px; height: 100px; background-color: #ffffff; border: 1px solid #000000; display: flex; align-items: center; justify-content: center;">
-                <!-- Placeholder for game piece -->
+                @for(int listPos = 0; listPos < MoveList.Count(); listPos++){
+
+                    if(MoveList[listPos].RowIndex == row && MoveList[listPos].ColumnIndex == col){
+                        if(MoveList[listPos].DiscColor == 'R'){
+                            <div style="width: 80px; height: 80px; background-color: red; border-radius: 50%;"></div>
+                        } else if(MoveList[listPos].DiscColor == 'Y' ){
+                            <div style="width: 80px; height: 80px; background-color: yellow; border-radius: 50%;"></div>
+                        }
+                    }
+
+                }
             </div>
         }
-}
+    }
+</div>

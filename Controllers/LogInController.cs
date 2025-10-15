@@ -87,7 +87,7 @@ namespace FyraIRad.Controllers
                 List<GameDetails> gameList = new List<GameDetails>();
                 gameList = gameMethods.GetGameDetails(out string errorMsg);
 
-                gameList = gameList.Where(g => g.Status == "Waiting" && (g.playerYellowId == HttpContext.Session.GetInt32("UserId"))).ToList();
+                gameList = gameList.Where(g => (g.Status == "Waiting" || g.Status == "Active") && (g.playerYellowId == HttpContext.Session.GetInt32("UserId") || g.playerRedId == HttpContext.Session.GetInt32("UserId"))).ToList();
 
                 ViewBag.ActiveGames = gameList;
 
@@ -159,6 +159,8 @@ namespace FyraIRad.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("ShowUserList");
         }
+
+
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
