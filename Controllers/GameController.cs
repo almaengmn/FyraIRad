@@ -118,7 +118,12 @@ namespace FyraIRad.Controllers
                 }
                 else if (moveList.Count() >= 1)
                 {
-                    newRowIndex = 7-moveList.Count();
+
+                    newRowIndex = moveList.Min(m => m.RowIndex) - 1;
+                }
+                else
+                {
+                    newRowIndex = 6;
                 }
 
                 newMove.RowIndex = newRowIndex;
