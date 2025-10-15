@@ -33,7 +33,7 @@ namespace FyraIRad.Controllers
 
             
 
-            return RedirectToAction("ActiveGame", newGame);
+            return RedirectToAction("ActiveGame", new { gameId = newGame.GameId });
         }
 
         [HttpPost]
@@ -60,16 +60,17 @@ namespace FyraIRad.Controllers
             return RedirectToAction("ShowUserList");
         }
 
-        public IActionResult ActiveGame(GameDetails game)
-        {
-            List<MoveDetails> moveList = new List<MoveDetails>();
-            moveList = moveMethods.GetMoveDetailsForGame((int)game.GameId, out string errormsg);
-            ViewBag.MoveList = moveList;
+  public IActionResult ActiveGame(int gameId)
+{
 
-            ViewBag.GameId = game.GameId;
+    GameDetails game = gameMethods.GetGameById(gameId, out string errormsg);
 
-            return View(game);
-        }
+    List<MoveDetails> moveList = moveMethods.GetMoveDetailsForGame(gameId, out string moveErr);
+    ViewBag.MoveList = moveList;
+    ViewBag.GameId = game.GameId;
+
+    return View(game);
+}
 
         [HttpPost]
         public IActionResult CreateMove(int gameId, int column)
@@ -91,7 +92,8 @@ namespace FyraIRad.Controllers
             else
             {
                 ViewBag.MoveError = "You are not a player in this game";
-                return RedirectToAction("ActiveGame", currentGame);
+                return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
+
 
             }
             // Check if it's the player's turn
@@ -114,7 +116,8 @@ namespace FyraIRad.Controllers
                 if (moveList.Count() >= 6)
                 {
                     ViewBag.MoveError = "Column is full, choose another column";
-                    return RedirectToAction("ActiveGame", currentGame);
+                    return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
+
                 }
                 else if (moveList.Count() >= 1)
                 {
@@ -152,12 +155,14 @@ namespace FyraIRad.Controllers
                     currentGame.CurrentTurn = 'R';
                 }
                 gameMethods.UpdateCurrentTurn(currentGame);
-                return RedirectToAction("ActiveGame", currentGame);
+                return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
+
             }
             else
             {
                 ViewBag.MoveError = "It's not your turn";
-                return RedirectToAction("ActiveGame", currentGame);
+                return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
+
             }
         }
     }

@@ -185,26 +185,26 @@ namespace FyraIRad.Models
                 }
             }
         }
-
-        public void UpdateCurrentTurn(GameDetails Game)
+public void UpdateCurrentTurn(GameDetails Game)
+{
+    using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
+    {
+        String sqlString = "UPDATE Games SET CurrentTurn=@CurrentTurn WHERE GameId=@Id";
+        SqlCommand sqlCommand = new SqlCommand(sqlString, sqlConnection);
+        sqlCommand.Parameters.AddWithValue("@CurrentTurn", Game.CurrentTurn);
+        sqlCommand.Parameters.AddWithValue("@Id", Game.GameId);
+        try
         {
-            using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
-            {
-                String sqlString = "UPDATE Games SET CurrentTurn=@CurrentTurn WHERE GameId=@Id";
-                SqlCommand sqlCommand = new SqlCommand(sqlString, sqlConnection);
-                sqlCommand.Parameters.AddWithValue("@CurrentTurn", Game.CurrentTurn);
-                sqlCommand.Parameters.AddWithValue("@Id", Game.GameId);
-                try
-                {
-                    sqlConnection.Open();
-                    sqlCommand.ExecuteNonQuery();
-                }
-                catch (Exception e)
-                {
-                    string errormsg = e.Message;
-                }
-            }
+            sqlConnection.Open();
+            sqlCommand.ExecuteNonQuery();
         }
+        catch (Exception e)
+        {
+            string errormsg = e.Message;
+        }
+    }
+}
+
 
         public char GetWinner(GameDetails Game)
         {
