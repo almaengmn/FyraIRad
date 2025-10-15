@@ -20,7 +20,7 @@
 </style>
 
 
-<h1>Users List</h1>
+<h1><span class="text-success">Users List</span></h1>
 
 @ViewBag.JoinError
 
@@ -28,11 +28,13 @@
     <thead>
 
         <tr>
-            <th>
+            <th><span class="text-danger">
                 Users
+                </span>
             </th>
-            <th>
+            <th><span class="text-primary">
                 Actions
+                </span>
             </th>
         </tr>
     </thead>
@@ -70,13 +72,14 @@
     </tbody>
 </table>
 
-<div style="border: 1px solid black;">
-    <h5>Your User: </h5>
-    Id: @Accessor.HttpContext.Session.GetInt32("UserId") <br />
-    Username: @Accessor.HttpContext.Session.GetString("Username")
-    <br />
-    @Html.ActionLink("Edit", "EditUser", new { id = @Accessor.HttpContext.Session.GetInt32("UserId") }, new { @class = "btn btn-outline-primary" })
-    @Html.ActionLink("Delete", "DeleteUser", new { id = @Accessor.HttpContext.Session.GetInt32("UserId") }, new { @class = "btn btn-outline-danger" })
-    @Html.ActionLink("Logout", "Logout", "LogIn", null, new { @class = "btn btn-outline-warning custom-hover"})
-
+<div style="border: 1px solid black; padding: 10px;">
+    <h5><span class="text-primary">Your User:</span></h5><span class="text-success">
+    Id:</span> @Accessor.HttpContext.Session.GetInt32("UserId") <br />
+    <span class="text-danger">Username:</span> @Accessor.HttpContext.Session.GetString("Username")
+    
+    <div class="mt-3">
+        @Html.ActionLink("Edit", "EditUser", new { id = @Accessor.HttpContext.Session.GetInt32("UserId") }, new { @class = "btn btn-outline-primary btn-sm me-3" })
+        @Html.ActionLink("Delete", "DeleteUser", new { id = @Accessor.HttpContext.Session.GetInt32("UserId") }, new { @class = "btn btn-outline-danger btn-sm me-3" })
+        @Html.ActionLink("Logout", "Logout", "LogIn", null, new { @class = "btn btn-outline-warning custom-hover btn-sm me-3" })
+    </div>
 </div>

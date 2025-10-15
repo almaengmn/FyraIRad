@@ -3,14 +3,14 @@
     ViewData["Title"] = "Log In";
 }
 
-<h1>Welcome</h1>
+<h1 class="mb-4"> <span class="text-danger">Welcome</span> <span class="text-success"> to the game of</span> <span class="text-primary">Fyra-I-Rad</span></h1>
+<h4><span class="text-primary">Log In</span> <span class="text-success">or Create a </span> <span class="text-danger">New User</span></h4>
 
-<h4>Log In or Create a New User</h4>
 <hr />
 
 @ViewBag.Error
 
-<h5>Log In</h5>
+<h5><span class="text-danger">Log In</span></h5>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="LogIn">
@@ -34,8 +34,7 @@
 <br />
 <br />
 <br />
-
-<h5>Create new User</h5>
+<h5><span class="text-danger">Create new User</span></h5>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="CreateUser">
