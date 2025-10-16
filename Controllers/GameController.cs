@@ -8,6 +8,7 @@ namespace FyraIRad.Controllers
         private readonly UserMethods userMethods;
         private readonly GameMethods gameMethods;
         private readonly MoveMethods moveMethods;
+        private object currentUserId;
 
         public GameController(IConfiguration configuration)
         {
@@ -51,13 +52,14 @@ namespace FyraIRad.Controllers
                         gameList[i].Status = "Active";
                     }
                     gameMethods.UpdateGameStatus(gameList[i]);
-                    
-                    return RedirectToAction("ActiveGame", gameList[i]);
+
+                    return RedirectToAction("ActiveGame", new { gameId = gameList[i].GameId });
+
                 }
             }
 
             ViewBag.JoinError = "Could not find game to join";
-            return RedirectToAction("ShowUserList");
+            return RedirectToAction("ShowUserList", "LogIn");
         }
 
   public IActionResult ActiveGame(int gameId)
@@ -65,11 +67,38 @@ namespace FyraIRad.Controllers
 
     GameDetails game = gameMethods.GetGameById(gameId, out string errormsg);
 
+     if (game.Status != "Active")
+            {
+                ViewBag.MoveError = "Game not active, waiting for opponent to join";
+                return RedirectToAction("ShowUserList", "LogIn");
+
+            }
+
+
     List<MoveDetails> moveList = moveMethods.GetMoveDetailsForGame(gameId, out string moveErr);
     ViewBag.MoveList = moveList;
     ViewBag.GameId = game.GameId;
 
-    return View(game);
+
+            int currentUserID = (int)HttpContext.Session.GetInt32("UserId");
+
+         
+            List<UserDetails> allUsers = userMethods.GetUserDetails(out string userErr);
+
+            
+            UserDetails redPlayer = allUsers.FirstOrDefault(u => u.UserId == game.playerRedId);
+            UserDetails yellowPlayer = allUsers.FirstOrDefault(u => u.UserId == game.playerYellowId);
+
+            
+            ViewBag.RedPlayerName = redPlayer != null ? redPlayer.Username : "Röd spelare";
+            ViewBag.YellowPlayerName = yellowPlayer != null ? yellowPlayer.Username : "Gul spelare";
+            ViewBag.CurrentTurn = game.CurrentTurn; 
+
+
+            return View(game);
+
+
+     
 }
 
         [HttpPost]
