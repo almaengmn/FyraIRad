@@ -52,7 +52,7 @@ namespace FyraIRad.Controllers
                     }
                     gameMethods.UpdateGameStatus(gameList[i]);
                     
-                    return RedirectToAction("ActiveGame", gameList[i]);
+                    return RedirectToAction("ActiveGame", gameList[i].GameId);
                 }
             }
 
