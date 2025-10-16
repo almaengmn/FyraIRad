@@ -8,6 +8,7 @@ namespace FyraIRad.Controllers
         private readonly UserMethods userMethods;
         private readonly GameMethods gameMethods;
         private readonly MoveMethods moveMethods;
+        private object currentUserId;
 
         public GameController(IConfiguration configuration)
         {
@@ -31,7 +32,7 @@ namespace FyraIRad.Controllers
             gameList = gameMethods.GetGameDetails(out string errormsg);
             newGame = gameList.Last();
 
-            
+
 
             return RedirectToAction("ActiveGame", new { gameId = newGame.GameId });
         }
@@ -41,36 +42,68 @@ namespace FyraIRad.Controllers
         {
             List<GameDetails> gameList = new List<GameDetails>();
             gameList = gameMethods.GetGameDetails(out string errormsg);
-            
-            for(int i = 0; i < gameList.Count(); i++)
+
+            for (int i = 0; i < gameList.Count(); i++)
             {
-                if ((gameList[i].playerRedId == id && gameList[i].playerYellowId == HttpContext.Session.GetInt32("UserId"))||(gameList[i].playerYellowId == id && gameList[i].playerRedId == HttpContext.Session.GetInt32("UserId")) && (gameList[i].Status == "Waiting" || gameList[i].Status == "Active"))
-                { 
-                    if(gameList[i].Status == "Waiting"&& gameList[i].playerYellowId == HttpContext.Session.GetInt32("UserId"))
+                if ((gameList[i].playerRedId == id && gameList[i].playerYellowId == HttpContext.Session.GetInt32("UserId")) || (gameList[i].playerYellowId == id && gameList[i].playerRedId == HttpContext.Session.GetInt32("UserId")) && (gameList[i].Status == "Waiting" || gameList[i].Status == "Active"))
+                {
+                    if (gameList[i].Status == "Waiting" && gameList[i].playerYellowId == HttpContext.Session.GetInt32("UserId"))
                     {
                         gameList[i].Status = "Active";
                     }
                     gameMethods.UpdateGameStatus(gameList[i]);
+
+
+                    return RedirectToAction("ActiveGame", new { gameId = gameList[i].GameId });
+
+
                     
                     return RedirectToAction("ActiveGame", gameList[i].GameId);
                 }
             }
 
             ViewBag.JoinError = "Could not find game to join";
-            return RedirectToAction("ShowUserList");
+            return RedirectToAction("ShowUserList", "LogIn");
         }
 
-  public IActionResult ActiveGame(int gameId)
-{
+        public IActionResult ActiveGame(int gameId)
+        {
 
-    GameDetails game = gameMethods.GetGameById(gameId, out string errormsg);
+            GameDetails game = gameMethods.GetGameById(gameId, out string errormsg);
 
-    List<MoveDetails> moveList = moveMethods.GetMoveDetailsForGame(gameId, out string moveErr);
-    ViewBag.MoveList = moveList;
-    ViewBag.GameId = game.GameId;
+            if (game.Status != "Active")
+            {
+                ViewBag.MoveError = "Game not active, waiting for opponent to join";
+                return RedirectToAction("ShowUserList", "LogIn");
 
-    return View(game);
-}
+            }
+
+
+            List<MoveDetails> moveList = moveMethods.GetMoveDetailsForGame(gameId, out string moveErr);
+            ViewBag.MoveList = moveList;
+            ViewBag.GameId = game.GameId;
+
+
+            int currentUserID = (int)HttpContext.Session.GetInt32("UserId");
+
+
+            List<UserDetails> allUsers = userMethods.GetUserDetails(out string userErr);
+
+
+            UserDetails redPlayer = allUsers.FirstOrDefault(u => u.UserId == game.playerRedId);
+            UserDetails yellowPlayer = allUsers.FirstOrDefault(u => u.UserId == game.playerYellowId);
+
+
+            ViewBag.RedPlayerName = redPlayer != null ? redPlayer.Username : "Röd spelare";
+            ViewBag.YellowPlayerName = yellowPlayer != null ? yellowPlayer.Username : "Gul spelare";
+            ViewBag.CurrentTurn = game.CurrentTurn;
+
+
+            return View(game);
+
+
+
+        }
 
         [HttpPost]
         public IActionResult CreateMove(int gameId, int column)
