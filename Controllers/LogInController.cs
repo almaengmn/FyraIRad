@@ -1,7 +1,5 @@
 ﻿using FyraIRad.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Configuration;
-
 
 namespace FyraIRad.Controllers
 {
@@ -9,12 +7,12 @@ namespace FyraIRad.Controllers
     {
         private readonly UserMethods userMethods;
         private readonly GameMethods gameMethods;
+
         public LogInController(IConfiguration configuration)
         {
             userMethods = new UserMethods(configuration);
             gameMethods = new GameMethods(configuration);
         }
-
 
         public IActionResult Index()
         {
@@ -23,12 +21,10 @@ namespace FyraIRad.Controllers
             return View();
         }
 
-
         [HttpPost]
         public IActionResult LogIn(UserDetails tryLogin)
         {
             List<UserDetails> userList = new List<UserDetails>();
-
 
             userList = userMethods.GetUserDetails(out string errormsg);
 
@@ -43,20 +39,16 @@ namespace FyraIRad.Controllers
 
                     return RedirectToAction("ShowUserList");
                 }
-
-
             }
 
             ViewBag.Error = "Username or password is incorrect";
             return View("Index");
-
         }
 
         [HttpPost]
         public IActionResult CreateUser(UserDetails newUser)
         {
             List<UserDetails> userList = new List<UserDetails>();
-
 
             userList = userMethods.GetUserDetails(out string errormsg);
 
@@ -73,7 +65,6 @@ namespace FyraIRad.Controllers
 
             return RedirectToAction("ShowUserList");
         }
-
 
         [HttpGet]
         public IActionResult ShowUserList()
@@ -97,7 +88,6 @@ namespace FyraIRad.Controllers
                     {
                         userList.RemoveAt(i);
                     }
-
                 }
 
                 return View(userList);
@@ -107,7 +97,6 @@ namespace FyraIRad.Controllers
                 ViewBag.Error = "Not logged in";
                 return RedirectToAction("Index");
             }
-
         }
 
         [HttpGet]
@@ -124,13 +113,11 @@ namespace FyraIRad.Controllers
                 ViewBag.Error = "Not logged in";
                 return RedirectToAction("Index");
             }
-
         }
 
         [HttpPost]
         public IActionResult EditUser(UserDetails editUser)
         {
-
             userMethods.EditUser(editUser);
             HttpContext.Session.SetString("Username", editUser.Username);
             HttpContext.Session.SetString("Password", editUser.Password);
@@ -160,12 +147,10 @@ namespace FyraIRad.Controllers
             return RedirectToAction("ShowUserList");
         }
 
-
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "LogIn");
         }
-
     }
 }

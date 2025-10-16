@@ -3,7 +3,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-
 builder.Services.AddDistributedMemoryCache(); // Adds a default in-memory implementation of IDistributedCache
 
 builder.Services.AddSession(options =>
@@ -14,10 +13,6 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddHttpContextAccessor(); // Register IHttpContextAccessor
-
-
-
-
 
 var app = builder.Build();
 
@@ -42,6 +37,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=LogIn}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();

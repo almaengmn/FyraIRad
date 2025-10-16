@@ -7,7 +7,6 @@ namespace FyraIRad.Models
     {
         private readonly string _connectionString;
 
-
         public MoveMethods(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
@@ -77,7 +76,7 @@ namespace FyraIRad.Models
                 sqlCommand.Parameters.AddWithValue("@Column", newMove.ColumnIndex);
                 sqlCommand.Parameters.AddWithValue("@Row", newMove.RowIndex);
                 sqlCommand.Parameters.AddWithValue("@Color", newMove.DiscColor);
-                
+
                 try
                 {
                     sqlConnection.Open();

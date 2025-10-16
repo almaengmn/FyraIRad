@@ -13,7 +13,5 @@
         public string? Status { get; set; }
 
         public char? Winner { get; set; }
-
-
     }
 }

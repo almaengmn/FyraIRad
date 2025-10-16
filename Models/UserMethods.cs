@@ -1,17 +1,14 @@
-﻿using System.Data;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace FyraIRad.Models
 {
     public class UserMethods
     {
-
         private readonly string _connectionString;
-
 
         public UserMethods(IConfiguration configuration)
         {
-
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
@@ -56,7 +53,6 @@ namespace FyraIRad.Models
                     {
                         errormsg = "No users found in database";
                         return userList;
-
                     }
                 }
                 catch (Exception e)
@@ -65,10 +61,7 @@ namespace FyraIRad.Models
                     return userList;
                 }
             }
-
-          
         }
-
 
         public void CreateUser(UserDetails newUser)
         {
@@ -86,7 +79,7 @@ namespace FyraIRad.Models
                 catch (Exception e)
                 {
                     string errormsg = e.Message;
-                } 
+                }
             }
         }
 
@@ -116,11 +109,9 @@ namespace FyraIRad.Models
 
                     if (i < count)
                     {
-
                         user.UserId = Convert.ToInt32(dataSet.Tables["UserList"].Rows[i]["UserId"]);
                         user.Username = Convert.ToString(dataSet.Tables["UserList"].Rows[i]["Username"]);
                         user.Password = Convert.ToString(dataSet.Tables["UserList"].Rows[i]["Password"]);
-
 
                         errormsg = "";
                         return user;
@@ -129,7 +120,6 @@ namespace FyraIRad.Models
                     {
                         errormsg = "No users found in database";
                         return user;
-
                     }
                 }
                 catch (Exception e)
@@ -137,7 +127,6 @@ namespace FyraIRad.Models
                     errormsg = e.Message;
                     return user;
                 }
-               
             }
         }
 

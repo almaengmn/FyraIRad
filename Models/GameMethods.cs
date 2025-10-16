@@ -7,10 +7,8 @@ namespace FyraIRad.Models
     {
         private readonly string _connectionString;
 
-
         public GameMethods(IConfiguration configuration)
         {
-
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
@@ -57,7 +55,6 @@ namespace FyraIRad.Models
                     {
                         errormsg = "No Games found in database";
                         return GameList;
-
                     }
                 }
                 catch (Exception e)
@@ -66,8 +63,6 @@ namespace FyraIRad.Models
                     return GameList;
                 }
             }
-
-
         }
 
         public GameDetails GetGameById(int gameId, out string errormsg)
@@ -185,26 +180,26 @@ namespace FyraIRad.Models
                 }
             }
         }
-public void UpdateCurrentTurn(GameDetails Game)
-{
-    using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
-    {
-        String sqlString = "UPDATE Games SET CurrentTurn=@CurrentTurn WHERE GameId=@Id";
-        SqlCommand sqlCommand = new SqlCommand(sqlString, sqlConnection);
-        sqlCommand.Parameters.AddWithValue("@CurrentTurn", Game.CurrentTurn);
-        sqlCommand.Parameters.AddWithValue("@Id", Game.GameId);
-        try
-        {
-            sqlConnection.Open();
-            sqlCommand.ExecuteNonQuery();
-        }
-        catch (Exception e)
-        {
-            string errormsg = e.Message;
-        }
-    }
-}
 
+        public void UpdateCurrentTurn(GameDetails Game)
+        {
+            using (SqlConnection sqlConnection = new SqlConnection(_connectionString))
+            {
+                String sqlString = "UPDATE Games SET CurrentTurn=@CurrentTurn WHERE GameId=@Id";
+                SqlCommand sqlCommand = new SqlCommand(sqlString, sqlConnection);
+                sqlCommand.Parameters.AddWithValue("@CurrentTurn", Game.CurrentTurn);
+                sqlCommand.Parameters.AddWithValue("@Id", Game.GameId);
+                try
+                {
+                    sqlConnection.Open();
+                    sqlCommand.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    string errormsg = e.Message;
+                }
+            }
+        }
 
         public char GetWinner(GameDetails Game)
         {

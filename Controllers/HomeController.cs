@@ -1,9 +1,8 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using FyraIRad.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace FyraIRad.Controllers;
-
 
 public class HomeController : Controller
 {

@@ -32,8 +32,6 @@ namespace FyraIRad.Controllers
             gameList = gameMethods.GetGameDetails(out string errormsg);
             newGame = gameList.Last();
 
-
-
             return RedirectToAction("ActiveGame", new { gameId = newGame.GameId });
         }
 
@@ -53,11 +51,8 @@ namespace FyraIRad.Controllers
                     }
                     gameMethods.UpdateGameStatus(gameList[i]);
 
-
                     return RedirectToAction("ActiveGame", new { gameId = gameList[i].GameId });
 
-
-                    
                     return RedirectToAction("ActiveGame", gameList[i].GameId);
                 }
             }
@@ -68,47 +63,35 @@ namespace FyraIRad.Controllers
 
         public IActionResult ActiveGame(int gameId)
         {
-
             GameDetails game = gameMethods.GetGameById(gameId, out string errormsg);
 
             if (game.Status != "Active")
             {
                 ViewBag.MoveError = "Game not active, waiting for opponent to join";
                 return RedirectToAction("ShowUserList", "LogIn");
-
             }
-
 
             List<MoveDetails> moveList = moveMethods.GetMoveDetailsForGame(gameId, out string moveErr);
             ViewBag.MoveList = moveList;
             ViewBag.GameId = game.GameId;
 
-
             int currentUserID = (int)HttpContext.Session.GetInt32("UserId");
-
 
             List<UserDetails> allUsers = userMethods.GetUserDetails(out string userErr);
 
-
             UserDetails redPlayer = allUsers.FirstOrDefault(u => u.UserId == game.playerRedId);
             UserDetails yellowPlayer = allUsers.FirstOrDefault(u => u.UserId == game.playerYellowId);
-
 
             ViewBag.RedPlayerName = redPlayer != null ? redPlayer.Username : "Röd spelare";
             ViewBag.YellowPlayerName = yellowPlayer != null ? yellowPlayer.Username : "Gul spelare";
             ViewBag.CurrentTurn = game.CurrentTurn;
 
-
             return View(game);
-
-
-
         }
 
         [HttpPost]
         public IActionResult CreateMove(int gameId, int column)
         {
-
             GameDetails currentGame = gameMethods.GetGameById(gameId, out string errormsg);
 
             char playerColor;
@@ -126,13 +109,10 @@ namespace FyraIRad.Controllers
             {
                 ViewBag.MoveError = "You are not a player in this game";
                 return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
-
-
             }
             // Check if it's the player's turn
             if (currentGame.CurrentTurn == playerColor && currentGame.Status == "Active")
             {
-
                 MoveDetails newMove = new MoveDetails();
                 newMove.GameId = gameId;
                 newMove.ColumnIndex = column;
@@ -150,11 +130,9 @@ namespace FyraIRad.Controllers
                 {
                     ViewBag.MoveError = "Column is full, choose another column";
                     return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
-
                 }
                 else if (moveList.Count() >= 1)
                 {
-
                     newRowIndex = moveList.Min(m => m.RowIndex) - 1;
                 }
                 else
@@ -163,7 +141,6 @@ namespace FyraIRad.Controllers
                 }
 
                 newMove.RowIndex = newRowIndex;
-
 
                 // Assign player and color based on current turn
 
@@ -189,14 +166,26 @@ namespace FyraIRad.Controllers
                 }
                 gameMethods.UpdateCurrentTurn(currentGame);
                 return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
-
             }
             else
             {
                 ViewBag.MoveError = "It's not your turn";
                 return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
-
             }
         }
+
+        [HttpPost]
+        public IActionResult SurrenderGame(int gameId)
+        {
+            GameDetails game = gameMethods.GetGameById(gameId, out string errormsg);
+
+            // Markera spelet som avslutat eller förlorat
+            game.Status = "Surrendered";
+            gameMethods.UpdateGameStatus(game);
+
+            // Skicka tillbaka till användarlistan
+            return RedirectToAction("ShowUserList", "LogIn");
+        }
+
     }
 }
