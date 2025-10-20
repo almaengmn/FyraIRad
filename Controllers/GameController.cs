@@ -198,19 +198,25 @@ namespace FyraIRad.Controllers
                 return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
             }
         }
+[HttpPost]
+public IActionResult SurrenderGame(int gameId)
+{
+    GameDetails game = gameMethods.GetGameById(gameId, out string errormsg);
 
-        [HttpPost]
-        public IActionResult SurrenderGame(int gameId)
-        {
-            GameDetails game = gameMethods.GetGameById(gameId, out string errormsg);
+    if (game != null)
+    {
+        // Om du vill markera som 'Surrendered' i databasen först (valfritt)
+        game.Status = "Surrendered";
+        gameMethods.UpdateGameStatus(game);
 
-            // Markera spelet som avslutat eller förlorat
-            game.Status = "Surrendered";
-            gameMethods.UpdateGameStatus(game);
+        // Ta bort spelet helt ur databasen
+        gameMethods.DeleteGame(game);
+    }
 
-            // Skicka tillbaka till användarlistan
-            return RedirectToAction("ShowUserList", "LogIn");
-        }
+    return RedirectToAction("ShowUserList", "LogIn");
+}
+
+
         // Check for a winner logic
         private char CheckWinner(char[,] board)
         {
