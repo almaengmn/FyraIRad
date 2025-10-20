@@ -165,6 +165,31 @@ namespace FyraIRad.Controllers
                     currentGame.CurrentTurn = 'R';
                 }
                 gameMethods.UpdateCurrentTurn(currentGame);
+
+                // Get all moves
+                List<MoveDetails> allMoves = moveMethods.GetMoveDetailsForGame(gameId, out string allMovesErrorMsg);
+                // Create 7x6 board
+                char[,] board = new char[7, 6];
+                foreach (var move in allMoves)
+                {
+                    // Row, Col -1 for 0 index
+                    int row = move.RowIndex - 1;
+                    int col = move.ColumnIndex - 1;
+                    board[col, row] = move.DiscColor;
+                }
+
+                char winner = CheckWinner(board);
+                if (winner == 'R' || winner == 'Y')
+                {
+                    // Mark game as finished, set winner
+                    currentGame.Status = "Finished";
+                    currentGame.Winner = winner;
+                    gameMethods.UpdateGameStatus(currentGame);
+                    gameMethods.UpdateWinner(currentGame);
+                    // GÖR OM TILL REDIRECT TILL VINNARSIDA?
+                    return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
+                }
+
                 return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
             }
             else
@@ -185,6 +210,33 @@ namespace FyraIRad.Controllers
 
             // Skicka tillbaka till användarlistan
             return RedirectToAction("ShowUserList", "LogIn");
+        }
+        // Check for a winner logic
+        private char CheckWinner(char[,] board)
+        {
+            int rows = 6, cols = 7;
+            for (int c = 0; c < cols; c++)
+            {
+                for (int r = 0; r < rows; r++)
+                {
+                    char color = board[c, r];
+                    if (color == '\0') continue;
+
+                    // Horizontal
+                    if (c <= cols - 4 && Enumerable.Range(0, 4).All(i => board[c + i, r] == color))
+                        return color;
+                    // Vertical
+                    if (r <= rows - 4 && Enumerable.Range(0, 4).All(i => board[c, r + i] == color))
+                        return color;
+                    // Diagonal /
+                    if (c <= cols - 4 && r >= 3 && Enumerable.Range(0, 4).All(i => board[c + i, r - i] == color))
+                        return color;
+                    // Diagonal \
+                    if (c <= cols - 4 && r <= rows - 4 && Enumerable.Range(0, 4).All(i => board[c + i, r + i] == color))
+                        return color;
+                }
+            }
+            return '\0'; // No winner
         }
 
     }
