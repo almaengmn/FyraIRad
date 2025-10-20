@@ -53,7 +53,6 @@ namespace FyraIRad.Controllers
 
                     return RedirectToAction("ActiveGame", new { gameId = gameList[i].GameId });
 
-                    return RedirectToAction("ActiveGame", gameList[i].GameId);
                 }
             }
 
