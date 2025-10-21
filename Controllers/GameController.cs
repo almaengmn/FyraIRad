@@ -27,7 +27,6 @@ namespace FyraIRad.Controllers
             newGame.CurrentTurn = 'Y';
             newGame.Status = "Waiting";
             gameMethods.CreateGame(newGame);
-            ViewBag.GameStatus = "Waiting";
 
             List<GameDetails> gameList = new List<GameDetails>();
             gameList = gameMethods.GetGameDetails(out string errormsg);
@@ -45,12 +44,11 @@ namespace FyraIRad.Controllers
 
             for (int i = 0; i < gameList.Count(); i++)
             {
-                if ((gameList[i].playerRedId == id && gameList[i].playerYellowId == HttpContext.Session.GetInt32("UserId")) || (gameList[i].playerYellowId == id && gameList[i].playerRedId == HttpContext.Session.GetInt32("UserId")))
+                if ((gameList[i].playerRedId == id && gameList[i].playerYellowId == HttpContext.Session.GetInt32("UserId")) || (gameList[i].playerYellowId == id && gameList[i].playerRedId == HttpContext.Session.GetInt32("UserId")) && (gameList[i].Status == "Waiting" || gameList[i].Status == "Active"))
                 {
                     if (gameList[i].Status == "Waiting" && gameList[i].playerYellowId == HttpContext.Session.GetInt32("UserId"))
                     {
                         gameList[i].Status = "Active";
-                        
                     }
                     gameMethods.UpdateGameStatus(gameList[i]);
 
@@ -69,12 +67,8 @@ namespace FyraIRad.Controllers
 
             if (game.Status != "Active")
             {
-                ViewBag.MoveError = "Game not active";
+                ViewBag.MoveError = "Game not active, waiting for opponent to join";
             }
-           
-            ViewBag.GameStatus = game.Status;
-            ViewBag.Winner = game.Winner;
-
 
             List<MoveDetails> moveList = moveMethods.GetMoveDetailsForGame(gameId, out string moveErr);
             ViewBag.MoveList = moveList;
@@ -94,141 +88,23 @@ namespace FyraIRad.Controllers
             return View(game);
         }
 
-        [HttpPost]
-        public IActionResult CreateMove(int gameId, int column)
-        {
-            GameDetails currentGame = gameMethods.GetGameById(gameId, out string errormsg);
-
-            char playerColor;
-
-            // Check what color the player is
-            if (currentGame.playerRedId == HttpContext.Session.GetInt32("UserId"))
-            {
-                playerColor = 'R';
-            }
-            else if (currentGame.playerYellowId == HttpContext.Session.GetInt32("UserId"))
-            {
-                playerColor = 'Y';
-            }
-            else
-            {
-                ViewBag.MoveError = "You are not a player in this game";
-                return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
-            }
-            // Check if it's the player's turn
-            if (currentGame.CurrentTurn == playerColor && currentGame.Status == "Active")
-            {
-                MoveDetails newMove = new MoveDetails();
-                newMove.GameId = gameId;
-                newMove.ColumnIndex = column;
-
-                List<MoveDetails> moveList = new List<MoveDetails>();
-                moveList = moveMethods.GetMoveDetailsForGame(gameId, out string errorMsg);
-                moveList = moveList.Where(m => m.ColumnIndex == column).ToList();
-
-                int newRowIndex = 1;
-
-                // Check if column is full
-                //Check how many moves are in the column
-
-                if (moveList.Count() >= 6)
-                {
-                    ViewBag.MoveError = "Column is full, choose another column";
-                    return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
-                }
-                else if (moveList.Count() >= 1)
-                {
-                    newRowIndex = moveList.Min(m => m.RowIndex) - 1;
-                }
-                else
-                {
-                    newRowIndex = 6;
-                }
-
-                newMove.RowIndex = newRowIndex;
-
-                // Assign player and color based on current turn
-
-                if (currentGame.CurrentTurn == 'R')
-                {
-                    newMove.PlayerId = currentGame.playerRedId;
-                    newMove.DiscColor = 'R';
-                }
-                else
-                {
-                    newMove.PlayerId = currentGame.playerYellowId;
-                    newMove.DiscColor = 'Y';
-                }
-                moveMethods.CreateMove(newMove);
-                // Switch turn
-                if (currentGame.CurrentTurn == 'R')
-                {
-                    currentGame.CurrentTurn = 'Y';
-                }
-                else
-                {
-                    currentGame.CurrentTurn = 'R';
-                }
-                gameMethods.UpdateCurrentTurn(currentGame);
-
-                // Get all moves
-                List<MoveDetails> allMoves = moveMethods.GetMoveDetailsForGame(gameId, out string allMovesErrorMsg);
-                // Create 7x6 board
-                char[,] board = new char[7, 6];
-                foreach (var move in allMoves)
-                {
-                    // Row, Col -1 for 0 index
-                    int row = move.RowIndex - 1;
-                    int col = move.ColumnIndex - 1;
-                    board[col, row] = move.DiscColor;
-                }
-
-                char winner = CheckWinner(board);
-                if (winner == 'R' || winner == 'Y')
-                {
-                    // Mark game as finished, set winner
-                    currentGame.Status = "Finished";
-                    currentGame.Winner = winner;
-                    gameMethods.UpdateGameStatus(currentGame);
-                    gameMethods.UpdateWinner(currentGame);
-                    // GÖR OM TILL REDIRECT TILL VINNARSIDA?
-                    return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
-                }
-
-                return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
-            }
-            else
-            {
-                ViewBag.MoveError = "It's not your turn";
-                return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
-            }
-        }
-        [HttpPost]
-        public IActionResult SurrenderGame(int gameId)
+        
+[HttpPost]
+public IActionResult SurrenderGame(int gameId)
 {
     GameDetails game = gameMethods.GetGameById(gameId, out string errormsg);
 
     if (game != null)
     {
         // Om du vill markera som 'Surrendered' i databasen först (valfritt)
-        game.Status = "Surrender";
+        game.Status = "Surrendered";
         gameMethods.UpdateGameStatus(game);
 
-                if (game.playerRedId == HttpContext.Session.GetInt32("UserId"))
-                {
-                    game.Winner = 'Y';
-                }
-                else if (game.playerYellowId == HttpContext.Session.GetInt32("UserId"))
-                {
-                    game.Winner = 'R';
-                }
-
-                gameMethods.UpdateWinner(game);
-                
-        
+        // Ta bort spelet helt ur databasen
+        gameMethods.DeleteGame(game);
     }
 
-    return RedirectToAction("ActiveGame", new { gameId = game.GameId });
+    return RedirectToAction("ShowUserList", "LogIn");
 }
 
 
@@ -258,22 +134,6 @@ namespace FyraIRad.Controllers
                 }
             }
             return '\0'; // No winner
-        }
-
-        public IActionResult DeleteGame(int gameId)
-        {
-            GameDetails game = gameMethods.GetGameById(gameId, out string errormsg);
-            if (game.CurrentTurn == 'D')
-            {
-                gameMethods.DeleteGame(game);
-            }
-            else
-            {
-                game.CurrentTurn = 'D';
-                HttpContext.Session.SetInt32("EndedGame", gameId);
-                gameMethods.UpdateCurrentTurn(game);
-            }
-                return RedirectToAction("ShowUserList", "LogIn");
         }
 
     }
