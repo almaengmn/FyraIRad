@@ -32,7 +32,8 @@ namespace FyraIRad.Controllers
             gameList = gameMethods.GetGameDetails(out string errormsg);
             newGame = gameList.Last();
 
-            return RedirectToAction("ActiveGame", new { gameId = newGame.GameId });
+           return RedirectToAction("ActiveGame", new { gameId = newGame.GameId });
+           
         }
 
         [HttpPost]
@@ -67,7 +68,6 @@ namespace FyraIRad.Controllers
             if (game.Status != "Active")
             {
                 ViewBag.MoveError = "Game not active, waiting for opponent to join";
-                return RedirectToAction("ShowUserList", "LogIn");
             }
 
             List<MoveDetails> moveList = moveMethods.GetMoveDetailsForGame(gameId, out string moveErr);

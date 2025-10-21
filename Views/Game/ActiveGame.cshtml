@@ -5,6 +5,7 @@
     var gameId = ViewBag.GameId;
     var MoveList = ViewBag.MoveList as List<MoveDetails>;
 }
+@ViewBag.MoveError
 <div class="mt-3 d-flex justify-content-center gap-3">
     <div class="btn btn-outline-danger btn-sm">
         🔴 Röd spelare: <strong>@ViewBag.RedPlayerName</strong>
