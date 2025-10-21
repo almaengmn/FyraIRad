@@ -27,6 +27,7 @@ namespace FyraIRad.Controllers
             newGame.CurrentTurn = 'Y';
             newGame.Status = "Waiting";
             gameMethods.CreateGame(newGame);
+            ViewBag.GameStatus = "Waiting";
 
             List<GameDetails> gameList = new List<GameDetails>();
             gameList = gameMethods.GetGameDetails(out string errormsg);
@@ -44,11 +45,12 @@ namespace FyraIRad.Controllers
 
             for (int i = 0; i < gameList.Count(); i++)
             {
-                if ((gameList[i].playerRedId == id && gameList[i].playerYellowId == HttpContext.Session.GetInt32("UserId")) || (gameList[i].playerYellowId == id && gameList[i].playerRedId == HttpContext.Session.GetInt32("UserId")) && (gameList[i].Status == "Waiting" || gameList[i].Status == "Active"))
+                if ((gameList[i].playerRedId == id && gameList[i].playerYellowId == HttpContext.Session.GetInt32("UserId")) || (gameList[i].playerYellowId == id && gameList[i].playerRedId == HttpContext.Session.GetInt32("UserId")))
                 {
                     if (gameList[i].Status == "Waiting" && gameList[i].playerYellowId == HttpContext.Session.GetInt32("UserId"))
                     {
                         gameList[i].Status = "Active";
+                        
                     }
                     gameMethods.UpdateGameStatus(gameList[i]);
 
@@ -67,8 +69,12 @@ namespace FyraIRad.Controllers
 
             if (game.Status != "Active")
             {
-                ViewBag.MoveError = "Game not active, waiting for opponent to join";
+                ViewBag.MoveError = "Game not active";
             }
+           
+            ViewBag.GameStatus = game.Status;
+            ViewBag.Winner = game.Winner;
+
 
             List<MoveDetails> moveList = moveMethods.GetMoveDetailsForGame(gameId, out string moveErr);
             ViewBag.MoveList = moveList;
@@ -197,22 +203,32 @@ namespace FyraIRad.Controllers
                 return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
             }
         }
-[HttpPost]
-public IActionResult SurrenderGame(int gameId)
+        [HttpPost]
+        public IActionResult SurrenderGame(int gameId)
 {
     GameDetails game = gameMethods.GetGameById(gameId, out string errormsg);
 
     if (game != null)
     {
         // Om du vill markera som 'Surrendered' i databasen först (valfritt)
-        game.Status = "Surrendered";
+        game.Status = "Surrender";
         gameMethods.UpdateGameStatus(game);
 
-        // Ta bort spelet helt ur databasen
-        gameMethods.DeleteGame(game);
+                if (game.playerRedId == HttpContext.Session.GetInt32("UserId"))
+                {
+                    game.Winner = 'Y';
+                }
+                else if (game.playerYellowId == HttpContext.Session.GetInt32("UserId"))
+                {
+                    game.Winner = 'R';
+                }
+
+                gameMethods.UpdateWinner(game);
+                
+        
     }
 
-    return RedirectToAction("ShowUserList", "LogIn");
+    return RedirectToAction("ActiveGame", new { gameId = game.GameId });
 }
 
 
@@ -242,6 +258,22 @@ public IActionResult SurrenderGame(int gameId)
                 }
             }
             return '\0'; // No winner
+        }
+
+        public IActionResult DeleteGame(int gameId)
+        {
+            GameDetails game = gameMethods.GetGameById(gameId, out string errormsg);
+            if (game.CurrentTurn == 'D')
+            {
+                gameMethods.DeleteGame(game);
+            }
+            else
+            {
+                game.CurrentTurn = 'D';
+                HttpContext.Session.SetInt32("EndedGame", gameId);
+                gameMethods.UpdateCurrentTurn(game);
+            }
+                return RedirectToAction("ShowUserList", "LogIn");
         }
 
     }

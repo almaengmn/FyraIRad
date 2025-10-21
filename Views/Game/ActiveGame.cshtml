@@ -25,21 +25,73 @@
 </div>
 
 
-<!-- Pilar ovanför rutnätet -->
-<div style="width: 750px; display: grid; grid-template-columns: repeat(7, 100px); margin-bottom: 5px;">
-    @for (int column = 1; column < 8; column++)
-    {
-        <div style="display: flex; justify-content: center;">
-            <form asp-action="CreateMove" asp-controller="Game" method="post" style="margin:0;">
-                <input type="hidden" name="gameId" value="@gameId" />
-                <input type="hidden" name="column" value="@column" />
-                <button type="submit" style="background:none; border:none; cursor:pointer;">
-                    <span style="font-size:2em;">&#8595;</span> <!-- Nedåtpil -->
-                </button>
-            </form>
+@if(ViewBag.GameStatus == "Finished")
+{
+    <div class="mt-3 d-flex justify-content-center">
+        <div class="alert alert-success" role="alert">
+            🎉 Spelet är över! Vinnaren är: <strong>
+                @if(ViewBag.Winner == 'R')
+                {
+                    @ViewBag.RedPlayerName
+                }
+                else if(ViewBag.Winner == 'Y')
+                {
+                    @ViewBag.YellowPlayerName
+                }
+            </strong>
         </div>
-    }
-</div>
+        <form asp-action="DeleteGame" asp-controller="Game" method="post" class="mt-3 text-center">
+            <input type="hidden" name="gameId" value="@ViewBag.GameId" />
+            <button type="submit" class="btn btn-outline-danger btn-sm">
+                End Game
+            </button>
+        </form>
+    </div>
+}
+else if (ViewBag.GameStatus == "Surrender")
+{
+    <div class="mt-3 d-flex justify-content-center">
+        <div class="alert alert-warning" role="alert">
+            ⚠️ Spelet är över! Spelaren <strong>
+                @if(ViewBag.Winner == 'R')
+                {
+                    @ViewBag.RedPlayerName
+                }
+                else if(ViewBag.Winner == 'Y')
+                {
+                    @ViewBag.YellowPlayerName
+                }
+            </strong> vann eftersom motståndaren gav upp.
+        </div>
+        
+        <form asp-action="DeleteGame" asp-controller="Game" method="post" class="mt-3 text-center">
+            <input type="hidden" name="gameId" value="@ViewBag.GameId" />
+            <button type="submit" class="btn btn-outline-danger btn-sm">
+                End  Game
+            </button>
+        </form>
+    </div>
+   
+}
+else
+{
+    <!-- Pilar ovanför rutnätet -->
+    <div style="width: 750px; display: grid; grid-template-columns: repeat(7, 100px); gap: 5px; margin-bottom: 5px;">
+        @for (int column = 1; column < 8; column++)
+        {
+            <div style="display: flex; justify-content: center;">
+                <form asp-action="CreateMove" asp-controller="Game" method="post" style="margin:0;">
+                    <input type="hidden" name="gameId" value="@gameId" />
+                    <input type="hidden" name="column" value="@column" />
+                    <button type="submit" style="background:none; border:none; cursor:pointer;">
+                        <span style="font-size:2em;">&#8595;</span> <!-- Nedåtpil -->
+                    </button>
+                </form>
+            </div>
+        }
+    </div>
+}
+
 
 <!-- Rutnätet -->
 <div style="width: 750px; display: grid; grid-template-columns: repeat(7, 100px); grid-template-rows: repeat(6, 100px); gap: 5px; border: 2px solid black; padding: 10px; background-color: #f0f0f0;">
@@ -64,9 +116,12 @@
     }
 </div>
 
-<form asp-action="SurrenderGame" asp-controller="Game" method="post" class="mt-3 text-center">
-    <input type="hidden" name="gameId" value="@ViewBag.GameId" />
-    <button type="submit" class="btn btn-outline-danger btn-sm">
-        🛑 Surrender
-    </button>
-</form>
+@if (ViewBag.GameStatus == "Active")
+{
+    <form asp-action="SurrenderGame" asp-controller="Game" method="post" class="mt-3 text-center">
+        <input type="hidden" name="gameId" value="@ViewBag.GameId" />
+        <button type="submit" class="btn btn-outline-danger btn-sm">
+            🛑 Surrender
+        </button>
+    </form>
+}

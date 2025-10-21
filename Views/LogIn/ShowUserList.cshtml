@@ -41,7 +41,7 @@
     <tbody>
         @foreach (var item in Model)
         {
-            var hasActiveGame = activeGames?.Any(g => (g.playerRedId == item.UserId) || (g.playerYellowId == item.UserId)) ?? false;
+            var hasActiveGame = activeGames?.Any(g => ((g.playerRedId == item.UserId) || (g.playerYellowId == item.UserId)) && (g.GameId != Accessor.HttpContext.Session.GetInt32("EndedGame"))) ?? false;
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.Username)
