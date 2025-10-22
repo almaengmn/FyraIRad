@@ -191,7 +191,30 @@ namespace FyraIRad.Controllers
                     currentGame.Winner = winner;
                     gameMethods.UpdateGameStatus(currentGame);
                     gameMethods.UpdateWinner(currentGame);
-                    // GÖR OM TILL REDIRECT TILL VINNARSIDA?
+                    return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
+                }
+
+                // Check if board full for draw
+                bool isDraw = true;
+                for (int c = 0; c < 7; c++)
+                {
+                    for (int r = 0; r < 6; r++)
+                    {
+                        if (board[c, r] == '\0')
+                        {
+                            isDraw = false;
+                            break;
+                        }
+                    }
+                    if (!isDraw) break;
+                }
+                //behöver viewbaga på samma sätt som disa gjorde
+                if (isDraw)
+                {
+                    currentGame.Status = "Finished";
+                    currentGame.Winner = null;
+                    gameMethods.UpdateGameStatus(currentGame);
+                    gameMethods.UpdateWinner(currentGame);
                     return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
                 }
 
