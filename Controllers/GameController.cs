@@ -211,7 +211,7 @@ namespace FyraIRad.Controllers
                 //behöver viewbaga på samma sätt som disa gjorde
                 if (isDraw)
                 {
-                    currentGame.Status = "Finished";
+                    currentGame.Status = "Draw";
                     currentGame.Winner = null;
                     gameMethods.UpdateGameStatus(currentGame);
                     gameMethods.UpdateWinner(currentGame);

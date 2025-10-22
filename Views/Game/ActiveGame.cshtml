@@ -67,11 +67,26 @@ else if (ViewBag.GameStatus == "Surrender")
         <form asp-action="DeleteGame" asp-controller="Game" method="post" class="mt-3 text-center">
             <input type="hidden" name="gameId" value="@ViewBag.GameId" />
             <button type="submit" class="btn btn-outline-danger btn-sm">
-                End  Game
+                End Game
             </button>
         </form>
     </div>
-   
+
+}
+else if(ViewBag.GameStatus == "Draw")
+{
+    <div class="mt-3 d-flex justify-content-center">
+        <div class="alert alert-info" role="alert">
+            🤝 Spelet är över! Det blev oavgjort mellan <strong>@ViewBag.RedPlayerName</strong> och <strong>@ViewBag.YellowPlayerName</strong>.
+        </div>
+        
+        <form asp-action="DeleteGame" asp-controller="Game" method="post" class="mt-3 text-center">
+            <input type="hidden" name="gameId" value="@ViewBag.GameId" />
+            <button type="submit" class="btn btn-outline-danger btn-sm">
+                End Game
+            </button>
+        </form>
+    </div>
 }
 else
 {
