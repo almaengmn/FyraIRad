@@ -16,7 +16,7 @@ namespace FyraIRad.Controllers
             gameMethods = new GameMethods(configuration);
             moveMethods = new MoveMethods(configuration);
         }
-
+        //Starta spel, sätt spelstatus till waiting för att andra spelare ska kunna gå med
         [HttpPost]
         public IActionResult StartGame(int id)
         {
@@ -36,7 +36,7 @@ namespace FyraIRad.Controllers
            return RedirectToAction("ActiveGame", new { gameId = newGame.GameId });
            
         }
-
+        //Joina spel. Kontroll att spelare kan joina, vilken spelare som joinar/startat spelet samt ändrar status till aktiv
         [HttpPost]
         public IActionResult JoinGame(int id)
         {
@@ -62,7 +62,7 @@ namespace FyraIRad.Controllers
             ViewBag.JoinError = "Could not find game to join";
             return RedirectToAction("ShowUserList", "LogIn");
         }
-
+        //Aktiva spelet. Skickar data för spelare/färg, spelstatus, vinnare och gameID
         public IActionResult ActiveGame(int gameId)
         {
             GameDetails game = gameMethods.GetGameById(gameId, out string errormsg);
@@ -93,7 +93,7 @@ namespace FyraIRad.Controllers
 
             return View(game);
         }
-
+        //Skapa drag, tar in vilket spel samt vilken kolumn disken droppas i
         [HttpPost]
         public IActionResult CreateMove(int gameId, int column)
         {
@@ -101,7 +101,7 @@ namespace FyraIRad.Controllers
 
             char playerColor;
 
-            // Check what color the player is
+            // Kollar vilken färg spelaren har och sätter variabel till det
             if (currentGame.playerRedId == HttpContext.Session.GetInt32("UserId"))
             {
                 playerColor = 'R';
@@ -115,7 +115,7 @@ namespace FyraIRad.Controllers
                 ViewBag.MoveError = "You are not a player in this game";
                 return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
             }
-            // Check if it's the player's turn
+            // Kollar ifall det är den spelaren som försöker göra draget och lägger draget i newMove
             if (currentGame.CurrentTurn == playerColor && currentGame.Status == "Active")
             {
                 MoveDetails newMove = new MoveDetails();
@@ -128,8 +128,8 @@ namespace FyraIRad.Controllers
 
                 int newRowIndex = 1;
 
-                // Check if column is full
-                //Check how many moves are in the column
+               
+                //Kontroll om en column är full
 
                 if (moveList.Count() >= 6)
                 {
@@ -147,7 +147,7 @@ namespace FyraIRad.Controllers
 
                 newMove.RowIndex = newRowIndex;
 
-                // Assign player and color based on current turn
+                //Lägger till spelare och färg baserat på vems tur det är till newMove
 
                 if (currentGame.CurrentTurn == 'R')
                 {
@@ -171,18 +171,17 @@ namespace FyraIRad.Controllers
                 }
                 gameMethods.UpdateCurrentTurn(currentGame);
 
-                // Get all moves
+                // Tar in alla moves och skapar ett 7x6 bräde med moves för att kolla vinnare
                 List<MoveDetails> allMoves = moveMethods.GetMoveDetailsForGame(gameId, out string allMovesErrorMsg);
-                // Create 7x6 board
                 char[,] board = new char[7, 6];
                 foreach (var move in allMoves)
                 {
-                    // Row, Col -1 for 0 index
                     int row = move.RowIndex - 1;
                     int col = move.ColumnIndex - 1;
                     board[col, row] = move.DiscColor;
                 }
 
+                //Anropar checkwinner för att se om någon vunnit och uppdaterar spelet i så fall
                 char winner = CheckWinner(board);
                 if (winner == 'R' || winner == 'Y')
                 {
@@ -194,7 +193,7 @@ namespace FyraIRad.Controllers
                     return RedirectToAction("ActiveGame", new { gameId = currentGame.GameId });
                 }
 
-                // Check if board full for draw
+                // Kontroll om brädet är fullt för oavgjort
                 bool isDraw = true;
                 for (int c = 0; c < 7; c++)
                 {
@@ -208,7 +207,8 @@ namespace FyraIRad.Controllers
                     }
                     if (!isDraw) break;
                 }
-                //behöver viewbaga på samma sätt som disa gjorde
+
+                // Om det är oavgjort, uppdatera spelet
                 if (isDraw)
                 {
                     currentGame.Status = "Draw";
@@ -228,15 +228,14 @@ namespace FyraIRad.Controllers
         }
         [HttpPost]
         public IActionResult SurrenderGame(int gameId)
-{
-    GameDetails game = gameMethods.GetGameById(gameId, out string errormsg);
+        {
+        GameDetails game = gameMethods.GetGameById(gameId, out string errormsg);
 
-    if (game != null)
-    {
-        // Om du vill markera som 'Surrendered' i databasen först (valfritt)
-        game.Status = "Surrender";
-        gameMethods.UpdateGameStatus(game);
-
+        if (game != null)
+            {
+                // Om du vill markera som 'Surrendered' i databasen först (valfritt)
+                game.Status = "Surrender";
+                gameMethods.UpdateGameStatus(game);
                 if (game.playerRedId == HttpContext.Session.GetInt32("UserId"))
                 {
                     game.Winner = 'Y';
@@ -245,17 +244,13 @@ namespace FyraIRad.Controllers
                 {
                     game.Winner = 'R';
                 }
-
                 gameMethods.UpdateWinner(game);
-                
-        
-    }
-
-    return RedirectToAction("ActiveGame", new { gameId = game.GameId });
+            }
+            return RedirectToAction("ActiveGame", new { gameId = game.GameId });
 }
 
 
-        // Check for a winner logic
+        // Logik för att kontrollera om det finns vinnare på brädet
         private char CheckWinner(char[,] board)
         {
             int rows = 6, cols = 7;
@@ -266,23 +261,23 @@ namespace FyraIRad.Controllers
                     char color = board[c, r];
                     if (color == '\0') continue;
 
-                    // Horizontal
+                    // Horisontell check
                     if (c <= cols - 4 && Enumerable.Range(0, 4).All(i => board[c + i, r] == color))
                         return color;
-                    // Vertical
+                    // Vertikal check
                     if (r <= rows - 4 && Enumerable.Range(0, 4).All(i => board[c, r + i] == color))
                         return color;
-                    // Diagonal /
+                    // Diagonal "/" check
                     if (c <= cols - 4 && r >= 3 && Enumerable.Range(0, 4).All(i => board[c + i, r - i] == color))
                         return color;
-                    // Diagonal \
+                    // Diagonal "\" check
                     if (c <= cols - 4 && r <= rows - 4 && Enumerable.Range(0, 4).All(i => board[c + i, r + i] == color))
                         return color;
                 }
             }
-            return '\0'; // No winner
+            return '\0';
         }
-
+        //Delete game eller markera som borttagen efter vinst/oavgjort
         public IActionResult DeleteGame(int gameId)
         {
             GameDetails game = gameMethods.GetGameById(gameId, out string errormsg);
