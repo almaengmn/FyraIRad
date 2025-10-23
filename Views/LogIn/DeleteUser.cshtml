@@ -31,8 +31,9 @@
         </dd>
     </dl>
     
-    <form asp-action="DeleteUser">
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="ShowUserList">Back to List</a>
-    </form>
+    <form asp-action="DeleteUser" method="post">
+    <input type="hidden" name="UserId" value="@Model.UserId" />
+    <input type="submit" value="Delete" class="btn btn-danger" /> |
+    <a asp-action="ShowUserList">Back to List</a>
+</form>
 </div>
