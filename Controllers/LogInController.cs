@@ -134,6 +134,7 @@ namespace FyraIRad.Controllers
                 user = userMethods.GetOneUserDetails(id, out string errormsg);
                 return View(user);
             }
+            else
             {
                 ViewBag.Error = "Not logged in";
                 return RedirectToAction("Index");
