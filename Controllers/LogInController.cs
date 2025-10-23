@@ -140,13 +140,16 @@ namespace FyraIRad.Controllers
             }
         }
 
-        [HttpPost]
-        public IActionResult DeleteUser(UserDetails deleteUser)
-        {
-            userMethods.DeleteUser(deleteUser);
-            HttpContext.Session.Clear();
-            return RedirectToAction("ShowUserList");
-        }
+     [HttpPost]
+public IActionResult DeleteUser(UserDetails deleteUser)
+{
+    userMethods.DeleteUser(deleteUser);
+    HttpContext.Session.Clear(); // rensa session
+
+    
+    return RedirectToAction("Index", "LogIn");
+}
+
 
         public IActionResult Logout()
         {
